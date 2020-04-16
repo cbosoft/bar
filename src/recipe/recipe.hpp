@@ -21,5 +21,7 @@ class Recipe {
     Recipe(std::list<std::string> dependency_patterns, std::string initial, std::string subsequent);
     ~Recipe();
 
+    static Recipe from_file(std::string path);
+
     void monitor();
 };
