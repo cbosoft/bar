@@ -1,0 +1,10 @@
+tags
+*.pdf
+gmon.out
+*vgcore
+bar
+obj
+tests
+analysis.txt
+d.dot
+*/.*.un~
