@@ -4,6 +4,7 @@ CFLAGS = -g -pg -Wall -Wextra -Werror -std=c++17 -O2
 RECIPE = \
 				 obj/recipe/recipe.o \
 				 obj/recipe/run.o \
+				 obj/recipe/file.o \
 				 obj/recipe/watch.o
 
 UTIL = \
