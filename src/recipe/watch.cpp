@@ -30,13 +30,13 @@ void Recipe::monitor()
 
   this->run_initial();
   char buffer[EVENT_BUF_LEN];
+  int length;
   while (true) {
 
-    std::cerr << "waiting for changes\n";
-    select(fd+1, &watch_set, NULL, NULL, NULL);
-    int length = read(fd, buffer, EVENT_BUF_LEN);
-    if (length < 0) {
-      perror("read");
+    length = read(fd, buffer, EVENT_BUF_LEN);
+    while (length < 0) {
+      length = read(fd, buffer, EVENT_BUF_LEN);
+      usleep(100000);
     }
 
     // Loop through event buffer
