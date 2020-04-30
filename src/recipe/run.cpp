@@ -16,12 +16,15 @@ void Recipe::run_subsequent()
 void Recipe::run_build(std::string command)
 {
   std::string out, err;
+  
+  notify("Build started...", command, "normal");
+
   int rc = run(command, out, err);
 
   if (rc) {
-    notify("Build failed!", Formatter() << "process returned with erorr (" << rc << "):\n" << out << "\n" << err, "critical", 60000);
+    notify("Build failed!", Formatter() << command << " returned with erorr (" << rc << ").\n", "critical", 60000);
   }
   else {
-    notify("Build complete.", Formatter() << out << "\n" << err, "normal");
+    notify("Build complete.", command, "normal");
   }
 }
