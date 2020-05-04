@@ -60,6 +60,7 @@ Recipes Recipes::from_file(std::string path)
         command = "";
         initial = "";
         on_error = "";
+        patterns = std::list<std::string>();
       }
     }
     else {
