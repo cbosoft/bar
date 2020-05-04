@@ -5,7 +5,22 @@
 #include "../util/exception.hpp"
 #include "recipe.hpp"
 
-Recipe Recipe::from_file(std::string path)
+std::string strip_whitespace(std::string s)
+{
+  auto cdata = s.data();
+  int len = s.size();
+
+  std::stringstream ss;
+  int i = 0;
+  while ((cdata[i] == ' ') or (cdata[i] == '\t')) i++;
+  for (; i < len; i++) {
+    ss << cdata[i];
+  }
+
+  return ss.str();
+}
+
+std::list<Recipe> Recipe::from_file(std::string path)
 {
 
   std::fstream infile(path);
@@ -13,8 +28,10 @@ Recipe Recipe::from_file(std::string path)
     throw IOError(Formatter() << "Failed to open recipe file: " << path, true);
   }
 
-  std::string initial, subsequent;
+  std::string command, initial, on_error;
   std::list<std::string> patterns;
+  std::list<Recipe> recipes;
+  bool reading = false;
 
   for (std::string line; std::getline(infile, line); ) {
     std::stringstream ss(line);
@@ -23,25 +40,35 @@ Recipe Recipe::from_file(std::string path)
     std::getline(ss, key, ':');
     std::getline(ss, value, ':');
 
-    if (key.compare("initial") == 0) {
-      initial = value;
+    value = strip_whitespace(value);
+
+    if (key.compare("command") == 0) {
+      command = value;
     }
-    else if (key.compare("subsequent") == 0) {
-      subsequent = value;
+    else if (key.compare("initial") == 0) {
+      initial = value;
     }
     else if (key.compare("pattern") == 0) {
       patterns.push_back(value);
     }
+    else if (key.compare("on_error") == 0) {
+      on_error = value;
+    }
+    else if (line.compare("---") == 0) {
+      if (reading) {
+        recipes.push_back(Recipe(patterns, command, initial, on_error));
+        command = "";
+        initial = "";
+        on_error = "";
+      }
+    }
     else {
-      throw RecipeSyntaxError(Formatter() << "Unknown key " << key << ".");
+      std::cerr << "warning: unknown key found in config: " << key << "." << std::endl;
     }
 
+    reading = true;
   }
 
-  if (not patterns.size()) {
-    throw RecipeSyntaxError(Formatter() << "No patterns specified in recipe.");
-  }
-
-  Recipe recipe(patterns, initial, subsequent);
-  return recipe;
+  recipes.push_back(Recipe(patterns, command, initial, on_error));
+  return recipes;
 }

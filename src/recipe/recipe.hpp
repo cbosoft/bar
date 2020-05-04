@@ -11,6 +11,7 @@ class Recipe {
 
     std::string initial_build;
     std::string subsequent_build;
+    std::string on_error;
 
     void run_initial();
     void run_subsequent();
@@ -18,7 +19,10 @@ class Recipe {
 
   public:
 
-    Recipe(std::list<std::string> dependency_patterns, std::string initial, std::string subsequent);
+    Recipe(std::list<std::string> dependency_patterns,
+        std::string command,
+        std::string initial,
+        std::string on_error);
     ~Recipe();
 
     static Recipe from_file(std::string path);
