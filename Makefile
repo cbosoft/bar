@@ -4,8 +4,12 @@ CFLAGS = -g -pg -Wall -Wextra -Werror -std=c++17 -O2
 RECIPE = \
 				 obj/recipe/recipe.o \
 				 obj/recipe/run.o \
-				 obj/recipe/file.o \
 				 obj/recipe/watch.o
+
+RECIPES = \
+					obj/recipes/recipes.o \
+					obj/recipes/file.o \
+					obj/recipes/watch.o
 
 UTIL = \
 			 obj/util/glob.o \
@@ -13,8 +17,8 @@ UTIL = \
 			 obj/util/run.o
 
 HDR = $(shell ls src/**/*.hpp)
-OBJ = $(RECIPE) $(UTIL)
-LINK =
+OBJ = $(RECIPE) $(RECIPES) $(UTIL)
+LINK = -lpthread
 DEFS =
 
 .SECONDARY:

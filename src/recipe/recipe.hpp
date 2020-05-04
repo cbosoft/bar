@@ -25,7 +25,5 @@ class Recipe {
         std::string on_error);
     ~Recipe();
 
-    static Recipe from_file(std::string path);
-
     void monitor();
 };

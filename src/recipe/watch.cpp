@@ -31,6 +31,7 @@ void Recipe::monitor()
   this->run_initial();
   char buffer[EVENT_BUF_LEN];
   int length;
+
   while (true) {
 
     length = read(fd, buffer, EVENT_BUF_LEN);

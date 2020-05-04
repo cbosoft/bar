@@ -3,7 +3,7 @@
 #include <sstream>
 
 #include "../util/exception.hpp"
-#include "recipe.hpp"
+#include "recipes.hpp"
 
 std::string strip_whitespace(std::string s)
 {
@@ -20,7 +20,7 @@ std::string strip_whitespace(std::string s)
   return ss.str();
 }
 
-std::list<Recipe> Recipe::from_file(std::string path)
+Recipes Recipes::from_file(std::string path)
 {
 
   std::fstream infile(path);
@@ -70,5 +70,6 @@ std::list<Recipe> Recipe::from_file(std::string path)
   }
 
   recipes.push_back(Recipe(patterns, command, initial, on_error));
-  return recipes;
+  return Recipes(recipes);
 }
+
