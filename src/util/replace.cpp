@@ -10,8 +10,6 @@ std::string replace(std::string s, std::string pattern, std::string newvalue)
   auto beg = std::sregex_iterator(s.begin(), s.end(), r);
   auto end = std::sregex_iterator();
 
-  std::cerr << s << " " << pattern << " " << newvalue << "\n";
-
   int i = 0, len = s.size();
   const char *cdata = s.data();
   std::stringstream ss;

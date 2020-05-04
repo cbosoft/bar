@@ -33,7 +33,6 @@ void Recipe::monitor()
     FD_SET(fd, &watch_set);
     inotify_add_watch(fd, dependency_cstr, IN_MODIFY | IN_ATTRIB);
     fd2name[fd] = dependency;
-    std::cerr << "monitoring: " << dependency << "\n";
   }
   changed = fd2name.begin()->second;
 

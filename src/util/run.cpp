@@ -14,7 +14,6 @@ int run(std::string command, std::string &output, std::string &error)
   };
 
   args[2] = command.c_str();
-  std::cerr << args[2] << std::endl;
 
   int sp_in[2], sp_out[2], sp_err[2];
   pipe(sp_in);

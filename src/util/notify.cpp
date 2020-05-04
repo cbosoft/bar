@@ -9,8 +9,6 @@
 void notify(std::string title, std::string body, std::string urgency, int timeout)
 {
 
-  std::cerr << urgency << "| " << title << ": " << body << std::endl;
-
   std::stringstream ss;
   ss << "notify-send -u " << urgency;
 
