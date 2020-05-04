@@ -20,6 +20,7 @@ void Recipe::run_build(std::string command)
   notify("Build started...", command, "normal");
 
   int rc = run(command, out, err);
+  std::cerr << out << "\n" << err << std::endl;
 
   if (rc) {
     notify("Build failed!", Formatter() << command << " returned with erorr (" << rc << ").\n", "critical", 60000);
