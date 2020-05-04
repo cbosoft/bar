@@ -5,7 +5,9 @@
 
 void Recipe::run_initial()
 {
-  this->run_build(this->initial_build);
+  if (this->initial_build.size()) {
+    this->run_build(this->initial_build);
+  }
 }
 
 void Recipe::run_subsequent()
@@ -23,7 +25,16 @@ void Recipe::run_build(std::string command)
   std::cerr << out << "\n" << err << std::endl;
 
   if (rc) {
-    notify("Build failed!", Formatter() << command << " returned with erorr (" << rc << ").\n", "critical", 60000);
+    std::stringstream ss;
+    ss << command << " returned with error";
+
+    if (this->on_error.size()) {
+      run(this->on_error, out, err);
+      ss << ": " << out;
+    }
+
+    ss << ".\n";
+    notify("Build failed!", ss.str(), "critical", 60000);
   }
   else {
     notify("Build complete.", command, "normal");
