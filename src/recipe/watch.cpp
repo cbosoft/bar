@@ -1,5 +1,3 @@
-#include <iostream>
-#include <map>
 #include <limits.h>
 #include <unistd.h>
 #include <sys/inotify.h>
@@ -11,11 +9,9 @@
 
 // written with help from https://gist.github.com/pkrnjevic/6016356
 
-std::map<int, std::string> fd2name;
-
-std::string read_and_get_fname(char *buffer, int bufflen)
+std::string Recipe::read_and_get_path(char *buffer, int bufflen)
 {
-  for (auto kv : fd2name) {
+  for (auto kv : this->fd2path) {
     if (read(kv.first, buffer, bufflen) > 0) return kv.second;
   }
   return "";
@@ -32,18 +28,18 @@ void Recipe::monitor()
     FD_ZERO(&watch_set);
     FD_SET(fd, &watch_set);
     inotify_add_watch(fd, dependency_cstr, IN_MODIFY | IN_ATTRIB);
-    fd2name[fd] = dependency;
+    this->fd2path[fd] = dependency;
   }
-  changed = fd2name.begin()->second;
+  changed = this->fd2path.begin()->second;
 
   this->run_initial(changed);
   char buffer[EVENT_BUF_LEN];
 
   while (true) {
 
-    changed = read_and_get_fname(buffer, EVENT_BUF_LEN);
+    changed = this->read_and_get_path(buffer, EVENT_BUF_LEN);
     while (not changed.size()) {
-      changed = read_and_get_fname(buffer, EVENT_BUF_LEN);
+      changed = this->read_and_get_path(buffer, EVENT_BUF_LEN);
       usleep(100000);
     }
 
