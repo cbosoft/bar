@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 #include <limits.h>
 #include <unistd.h>
 #include <sys/inotify.h>
@@ -10,51 +11,49 @@
 
 // written with help from https://gist.github.com/pkrnjevic/6016356
 
+std::map<int, std::string> fd2name;
+
+std::string read_and_get_fname(char *buffer, int bufflen)
+{
+  for (auto kv : fd2name) {
+    if (read(kv.first, buffer, bufflen) > 0) return kv.second;
+  }
+  return "";
+}
+
 void Recipe::monitor()
 {
-  int fd = inotify_init1(IN_NONBLOCK);
 
-  // checking for error
-  if (fd < 0) {
-    perror("inotify_init");
-  }
-
-  fd_set watch_set;
-  FD_ZERO(&watch_set);
-  FD_SET(fd, &watch_set);
-
+  std::string changed = "";
   for (auto dependency : this->dependencies) {
+    int fd = inotify_init1(IN_NONBLOCK);
     const char *dependency_cstr = dependency.c_str();
+    fd_set watch_set;
+    FD_ZERO(&watch_set);
+    FD_SET(fd, &watch_set);
     inotify_add_watch(fd, dependency_cstr, IN_MODIFY | IN_ATTRIB);
+    fd2name[fd] = dependency;
+    std::cerr << "monitoring: " << dependency << "\n";
   }
+  changed = fd2name.begin()->second;
 
-  this->run_initial();
+  this->run_initial(changed);
   char buffer[EVENT_BUF_LEN];
-  int length;
 
   while (true) {
 
-    length = read(fd, buffer, EVENT_BUF_LEN);
-    while (length < 0) {
-      length = read(fd, buffer, EVENT_BUF_LEN);
+    changed = read_and_get_fname(buffer, EVENT_BUF_LEN);
+    while (not changed.size()) {
+      changed = read_and_get_fname(buffer, EVENT_BUF_LEN);
       usleep(100000);
     }
 
-    // Loop through event buffer
-    for (int i = 0; i < length;) {
-      struct inotify_event *event = (struct inotify_event *) &buffer[i];
-      
-      if ((event->wd == -1) or (event->mask & IN_Q_OVERFLOW)) {
-	      break;
-    	}
+    struct inotify_event *event = (struct inotify_event *) &buffer[0];
 
-      if ((event->mask & IN_MODIFY) or (event->mask & IN_ATTRIB)) {
-        this->run_subsequent();
-        break;
-      }
-
-      i += EVENT_SIZE + event->len;
+    if ((event->mask & IN_MODIFY) or (event->mask & IN_ATTRIB)) {
+      this->run_subsequent(changed);
     }
+
   }
 
 }

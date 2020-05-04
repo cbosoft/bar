@@ -14,6 +14,7 @@ RECIPES = \
 UTIL = \
 			 obj/util/glob.o \
 			 obj/util/notify.o \
+			 obj/util/replace.o \
 			 obj/util/run.o
 
 HDR = $(shell ls src/**/*.hpp)

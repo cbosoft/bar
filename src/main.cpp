@@ -30,6 +30,10 @@ void show_help_and_exit()
    << "\n"
    << "There can be multiple recipes specified in the same file, separated by three\n"
    << "dashes: \"---\".\n"
+   << "\n"
+   << "In the command, the file name of the changed file can be obtained using the\n"
+   << "variables <FILE> or <FILE_NOEXT> for the full path, and the path with no\n"
+   << "extension respectively.\n"
    ;
   exit(0);
 }

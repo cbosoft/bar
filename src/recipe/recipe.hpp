@@ -13,9 +13,9 @@ class Recipe {
     std::string subsequent_build;
     std::string on_error;
 
-    void run_initial();
-    void run_subsequent();
-    void run_build(std::string command);
+    void run_initial(std::string changed);
+    void run_subsequent(std::string changed);
+    void run_build(std::string command, std::string changed);
 
   public:
 
